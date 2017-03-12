@@ -1,0 +1,94 @@
+# Generated from example.kv at 2017-03-13 03:53:52.940999
+
+import kivy.metrics as Metrics
+from kivy.factory import Factory
+from kivy.lang import (
+    Builder, ParserSelectorName, _handlers, ProxyApp, delayed_call_fn)
+from kivy.event import EventDispatcher, Observable
+from kivy import require
+
+
+_mc = [None, ] * 1
+_includes = []
+
+app = ProxyApp()
+pt = Metrics.pt
+inch = Metrics.inch
+cm = Metrics.cm
+mm = Metrics.mm
+dp = Metrics.dp
+sp = Metrics.sp
+
+
+def _execute_directive(cmd):
+    import sys
+    # small version without error handling of directives
+    # temporary, until the compiler analyse and do the work
+    cmd = cmd.strip()
+    if cmd[:4] == 'set ':
+        name, value = cmd[4:].strip().split(' ', 1)
+        globals()[name] = eval(value)
+    elif cmd[:8] == 'include ':
+        ref = cmd[8:].strip()
+        force_load = False
+        if ref[:6] == 'force ':
+            ref = ref[6:].strip()
+            force_load = True
+        if ref[-3:] != '.kv':
+            return
+        if ref in _includes:
+            if not force_load:
+                return
+            Builder.unload_file(ref)
+            Builder.load_file(ref)
+        else:
+            _includes.append(ref)
+            Builder.load_file(ref)
+    elif cmd[:7] == 'import ':
+        package = cmd[7:].strip()
+        l = package.split(' ')
+        if len(l) != 2:
+            return
+        alias, package = l
+        try:
+            if package not in sys.modules:
+                try:
+                    mod = __import__(package)
+                except ImportError:
+                    mod = __import__('.'.join(package.split('.')[:-1]))
+                for part in package.split('.')[1:]:
+                    mod = getattr(mod, part)
+            else:
+                mod = sys.modules[package]
+            globals()[alias] = mod
+        except ImportError:
+            return
+
+
+# directives
+
+# register dynamic classes
+
+# registration
+badd = Builder.rules.append
+
+_mc[0] = set()
+def _r0(root):
+    if root.__class__ not in _mc[0]:
+        if not hasattr(root, "text"):
+            root.create_property("text", ("Hello World"))
+        _mc[0].add(root.__class__)
+
+    root.text = "Hello World"
+
+    prop = root.property("text", quiet=True)
+    if prop is not None:
+        prop.dispatch(root)
+
+_r0.avoid_previous_rules = False
+
+
+def get_root():
+    widget = Factory.get("Label")()
+    _r0(widget)
+    return widget

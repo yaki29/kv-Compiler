@@ -1062,8 +1062,8 @@ class PyCompiler(object):
         return ["Builder.load_string('''", code, "''')"]
 
     def compile(self, parser):
-    '''main compile method
-    '''
+        '''main compile method'''
+
         lines = [header_imports, header_gloabls, header_directives, '']
         lines.extend(self.compile_directives(parser.directives))
 
@@ -1134,6 +1134,8 @@ if __name__ == "__main__":
     compiler = PyCompiler()
     
     lines = compiler.compile(parser)
+    
+    print "lines : \n %r"%(lines)
     '''Returned optimized lines that are shown in output as filename.kvc
     '''
     with codecs.open(splitext(fn)[0] + '.kvc', "w") as fd:
