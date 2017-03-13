@@ -1123,7 +1123,7 @@ if __name__ == "__main__":
     import sys
     from os.path import splitext
     fn = len(sys.argv) > 1 and sys.argv[1] or r'..\data\style.kv'
-
+    print fn
     with codecs.open(fn) as fd:
         content = fd.read()
 

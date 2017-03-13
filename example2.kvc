@@ -1,4 +1,4 @@
-# Generated from example.kv at 2017-03-13 06:00:45.618583
+# Generated from example2.kv at 2017-03-13 05:06:10.471738
 
 import kivy.metrics as Metrics
 from kivy.factory import Factory
@@ -76,10 +76,10 @@ _mc[0] = set()
 def _r0(root):
     if root.__class__ not in _mc[0]:
         if not hasattr(root, "text"):
-            root.create_property("text", ("Hello World"))
+            root.create_property("text", (None))
         _mc[0].add(root.__class__)
 
-    root.text = "Hello World"
+    root.text = "hello I'm button"
 
     prop = root.property("text", quiet=True)
     if prop is not None:
@@ -89,6 +89,6 @@ _r0.avoid_previous_rules = False
 
 
 def get_root():
-    widget = Factory.get("Label")()
+    widget = Factory.get("Button")()
     _r0(widget)
     return widget

@@ -319,6 +319,7 @@ import datetime
 from types import CodeType
 from collections import OrderedDict, defaultdict
 from kivy.lang import Parser, lang_str, Builder
+from lang import BuilderBase
 from re import match, sub, split, compile as re_compile
 from functools import partial
 from os.path import abspath
@@ -1337,7 +1338,7 @@ class KVCompiler(object):
     '''**Temporary experimental method**
 
     A temporary option that switches betweeen two fundemental ways of doing the
-    executaion order of KV bindings. See :ref:`Batch Binding`.
+    execution order of KV bindings. See :ref:`Batch Binding`.
     '''
 
     # temporary, per rule variables
@@ -2403,4 +2404,5 @@ if __name__ == "__main__":
     import sys
     from kivy.lang import Builder
     fn = len(sys.argv) > 1 and sys.argv[1] or r'..\data\style.kv'
-    Builder.compile_kv(fn)
+    print fn
+    BuilderBase.compile_kv(filename=fn)
