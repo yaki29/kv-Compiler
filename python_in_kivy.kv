@@ -1,0 +1,794 @@
+#:import color kivy.utils.get_color_from_hex
+#:import sp kivy.metrics.sp
+#:import sin math.sin
+#:import chain itertools.chain
+#:set title_color '009688'
+#:set title_underline 'b2dfdb'
+#:set subtitle_color '00bcd4'
+#:set subtitle_underline 'b2ebf2'
+#:set default_color (0, 0, 0, 1)
+#:set background_color 'e0f7fa'
+#:set content_color '000000'
+#:set font_size 35
+
+<Title@Label>
+    size_hint_y: None
+    height: self.texture_size[1] + sp(20)
+    color1: title_color
+    color2: title_underline
+    font_size: sp(25)
+    canvas.before:
+        Color:
+            rgba: color(root.color1) if root.color1 else default_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        Color:
+            rgba: color(root.color2) if root.color2 else default_color
+        Rectangle:
+            pos: self.pos
+            size: self.width, sp(5)
+
+<SubTitle@FloatLayout+Title>:
+    color1: subtitle_color
+    color2: subtitle_underline
+
+<PresButton@ButtonBehavior+SubTitle>:
+
+<ContentLabel@Label>:
+    color: color(content_color)
+    font_size: sp(24)
+    size: self.texture_size
+    size_hint_y: None
+
+<CodeLabel@Label>
+    code: ''
+    text: self.code .replace('\t', 'Â ' * 4)
+    font_size: sp(20)
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+
+<Spacer@Widget>
+
+<RootRule@BoxLayout>:
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: color(background_color)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Title:
+        text: 'PrÃ©sentation Kivy - PyCon FR - 26/10/2014'
+    SubTitle:
+        text: sm.current
+        PresButton:
+            pos_hint: {'center_y': .5, 'x': 0}
+            size_hint_x: None
+            width: self.height
+            text: 'â†�'
+            on_press:
+                sm.transition.direction = 'right'
+                sm.current = sm.previous()
+        PresButton:
+            pos_hint: {'center_y': .5, 'right': 1}
+            size_hint_x: None
+            width: self.height
+            text: 'â†’'
+            on_press:
+                sm.transition.direction = 'left'
+                sm.current = sm.next()
+
+    ScreenManager:
+        id: sm
+        Screen:
+            name: 'PrÃ©sentation'
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''Gabriel Pettier
+                        DÃ©veloppeur python
+                        Contributeur puis Core-DÃ©veloppeur Kivy depuis 2010
+                        Â 
+                        http://tshirtman.fr
+                        http://github.com/tshirtman
+                        http://twitter.com/tshirtman
+                        Â 
+                        http://tangibledisplay.com
+                        DÃ©veloppement d'interactions tangibles
+                        '''
+                Spacer
+        Screen:
+            name: 'Kivy'
+            BoxLayout:
+                orientation: 'vertical'
+                FloatLayout:
+                    id: logo_container
+                    size_hint_y: None
+                    height: logo.texture_size[1] * 2
+                    Scatter:
+                        size_hint: None, None
+                        size: logo.size
+                        center: logo_container.center
+                        Image:
+                            id: logo
+                            size: self.texture_size
+                            source: 'data/logo/kivy-icon-256.png'
+
+                ContentLabel:
+                    text:
+                        '''BibliothÃ¨que de Widgets orientÃ©s multitouch
+                        â€£ DÃ©veloppÃ© majoritairement en pur Python, le reste en
+                        Cython pour les performances.
+
+                        â€£ Multiplatforme: Windows, OSX, Linux, Android et IOS
+                        supportÃ©s.
+
+                        â€£ API graphique directement basÃ©e sur  OpenGL ES 2.0.
+
+                        â€£ Projet Libre et collaboratif, licence MIT.
+                        '''
+                Spacer
+        Screen:
+            name: 'Concepts'
+            GridLayout:
+                size_hint: 1, None
+                pos_hint: {'center': (.5, .5)}
+                size_hint: .5, 1
+                cols: 1
+                height: self.minimum_height
+                ContentLabel:
+                    text_size: self.width, None
+                    text:
+                        """
+                        â€£ Instruction
+                        â†’ Permet d'indiquer un ordre au GPU
+                        """
+                ContentLabel:
+                    text_size: self.width, None
+                    text:
+                        """
+                        â€£ Ã‰vÃ¨nement
+                        â†’ Propage une information Ã  tous les acteurs concernÃ©s
+                        """
+                Spacer
+        Screen:
+            name: 'Instruction exemple'
+
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    CodeLabel:
+                        code:
+                            '''
+                            with widget.canvas:
+                            \tColor(1, 0, 0, 1, mode='rgba')
+                            \tRectangle(pos=widget.pos, size=widget.size)
+                            \tColor(.5, .5, .5, 1, mode='rgba')
+                            \tEllipse(pos=widget.pos, size=widget.size)
+                            '''
+                    Widget:
+                        canvas:
+                            Color:
+                                rgba: 1, 0, 0, 1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                            Color:
+                                rgba: .5, .5, .5, 1
+                            Ellipse:
+                                pos: self.pos
+                                size: self.size
+        Screen:
+            name: 'Ã‰vÃ¨nement'
+            BoxLayout:
+                CodeLabel:
+                    code:
+                        '''
+                        def function(*args):
+                        \tprint(args)
+                        Â 
+                        widget.bind(on_touch_down=function)
+                        '''
+                ContentLabel:
+                    text: 'touch me\n'
+                    font_size: 15
+                    text_size: self.width, None
+                    on_touch_down: self.text += '\n%s' % (','.join(str(x) for x in args))
+
+        Screen:
+            name: 'Properties'
+
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''Permet de lier les attributs des objets Ã  des
+                        Ã©vÃ¨nements.
+                        â€£ StringProperty
+                        â€£ NumericProperty
+                        â€£ ObjectProperty
+                        â€£ AliasProperty
+                        â€£ etcâ€¦
+
+                        Doit Ãªtre dÃ©clarÃ© sur des sous-classes d'EventDispatcher,
+                        qui implÃ©mentent le pattern "Observer". Ainsi, il est
+                        possible Ã  l'objet de rÃ©aliser des actions quand ses
+                        propriÃ©tÃ©s changent de valeur.
+                        '''
+                CodeLabel:
+                    code:
+                        '''
+                        class ClassWithProperties(EventDispatcher):
+                        \tname = StringProperty('')
+                        \tcount = NumericProperty(0)
+                        Â 
+                        def on_name(self, value):
+                        \tprint "my name changed to %s" % value
+                        '''
+
+        Screen:
+            name: 'Widgets'
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''
+                        â€£ HÃ©rite d'EventDispatcher
+                        â€£ Contient un Canvas (groupe d'instructions).
+
+                        Propose un certain nombre d'Ã©vÃ¨nements par dÃ©faut,
+                        notamment:
+                        â€£ on_touch_down
+                        â€£ on_touch_move
+                        â€£ on_touch_up
+                        '''
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                BoxLayout:
+                    CodeLabel:
+                        font_size: sp(20)
+                        text:
+                            '''
+                            class MyWidget(Widget):
+                            Â Â Â active = BooleanProperty(False)
+                            Â 
+                            Â Â Â Â def __init__(self, **kwargs):
+                            Â Â Â Â Â Â Â Â super(MyWidget, self).__init__(**kwargs)
+                            Â Â Â Â Â Â Â Â self.bind(on_pos=self.update, on_size=self.update)
+                            Â Â Â Â Â Â Â Â with self.canvas:
+                            Â Â Â Â Â Â Â Â Â Â Â Â self.color = Color(1, 1, 1, 1, mode='rgba')
+                            Â Â Â Â Â Â Â Â Â Â Â Â self.rectangle = Rectangle(pos=self.pos, size=self.size)
+                            Â 
+                            Â Â Â Â def on_active(self, active):
+                            Â Â Â Â Â Â Â Â if self.active:
+                            Â Â Â Â Â Â Â Â Â Â Â Â self.color.rgba = (.5, .5, 0, 1)
+                            Â Â Â Â Â Â Â Â else:
+                            Â Â Â Â Â Â Â Â Â Â Â Â self.coler.rgba = (1, 1, 1, 1)
+                            Â 
+                            Â Â Â Â def update(self, *args):
+                            Â Â Â Â Â Â Â Â self.rect.pos = self.pos
+                            Â Â Â Â Â Â Â Â self.rect.size = self.size
+                            Â 
+                            Â Â Â Â def on_touch_down(self, touch):
+                            Â Â Â Â Â Â Â Â if self.collide_point(*touch.pos):
+                            Â Â Â Â Â Â Â Â Â Â Â Â self.active = not self.active
+                            '''
+                        font_size: sp(14)
+                    Widget:
+                        active: False
+                        on_touch_down:
+                            if self.collide_point(*args[1].pos): self.active = not self.active
+                        canvas:
+                            Color:
+                                rgba: (.5, .5, 0, 1) if self.active else (1, 1, 1, 1)
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+
+        Screen:
+            name: 'Layouts'
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''
+                        Les Widgets sont par dÃ©faut complÃ¨tement libres de leur
+                        placement et de leur tailles, qui sont absolues (origine
+                        bas-gauche de l'Ã©cran).
+                        Â 
+                        Certains widgets sont spÃ©cialisÃ©s dans le placement et le
+                        dimensionnement de leurs sous widgets (enfants).
+                        Â 
+                        â€£ FloatLayout
+                        â€£ BoxLayout
+                        â€£ AnchorLayout
+                        â€£ GridLayout
+                        â€£ StackLayout
+                        â€£ etcâ€¦
+                        '''
+                Spacer
+        Screen:
+            name: 'Layouts - 2 - Hints'
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''
+                        La taille/position des widgets enfants d'un Layout est
+                        gÃ©nÃ©ralement contrÃ´lÃ©e via les propriÃ©tÃ©s size_hint et
+                        pos_hint, qui sont relative au Layout.
+                        '''
+                BoxLayout:
+                    CodeLabel:
+                        text:
+                            '''
+                            f = FloatLayout()
+                            f.add_widget(
+                            Â Â Â Â Button(
+                            Â Â Â Â Â Â Â Â size_hint=(.2, .1),
+                            Â Â Â Â Â Â Â Â pos_hint={'center': (.5, .5)})
+                            '''
+                    FloatLayout:
+                        Button:
+                            size_hint: .2, .1
+                            pos_hint: {'center': (.5, .5)}
+                            text: 'a button'
+                ContentLabel:
+                    text:
+                        '''
+                        La taille peut Ãªtre dÃ©finie arbitrairement en
+                        dÃ©sactivant size_hint dans les directions souhaitÃ©s:
+                        '''
+                BoxLayout:
+                    CodeLabel:
+                        text:
+                            '''
+                            f = FloatLayout()
+                            f.add_widget(
+                            Â Â Â Â Button(
+                            Â Â Â Â Â Â Â Â size_hint_x=None,
+                            Â Â Â Â Â Â Â Â pos_hint={'center': (.5, .5)},
+                            Â Â Â Â Â Â Â Â size_hint_y=.1,
+                            Â Â Â Â Â Â Â Â width=250,
+                            Â Â Â Â Â Â Â Â text='another button'))
+                            '''
+                    FloatLayout:
+                        Button:
+                            size_hint_x: None
+                            pos_hint: {'center': (.5, .5)}
+                            size_hint_y: .1
+                            width: 250
+                            text: 'another button'
+        Screen:
+            name: 'Le language KV'
+
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    font_size: sp(25)
+                    text:
+                        '''
+                        Python:
+                        â€£ super pour la logique
+                        â€£ moins pour la dÃ©claration d'arbres de widgets.
+
+                        Kv:
+                        â€£ Syntaxe dÃ©clarative
+                        â€£ DÃ©tection des dÃ©pendances et crÃ©ations de
+                        Â Â Â branchements automatiques
+                        '''
+                BoxLayout:
+                    CodeLabel:
+                        text:
+                            '''
+                            w = Widget()
+                            with w.canvas:
+                            Â Â Â Â Color(1, 0, 1, 1, mode='rgba')
+                            Â Â Â Â rect = Rectangle(pos=w.pos, size=w.size)
+                            Â 
+                            def update(self, *args):
+                            Â Â Â Â rect.pos = w.pos
+                            Â Â Â Â rect.size = w.size
+                            Â 
+                            w.bind(pos=update, size=update)
+                            '''
+                    ContentLabel:
+                        text: 'vs'
+                        size_hint_x: None
+                        width: self.texture_size[0] * 2
+                        pos_hint: {'center_y': .5}
+                    CodeLabel:
+                        text:
+                            '''
+                            from kivy.lang import Builder
+                            Â 
+                            KV = """
+                            Widget:
+                            Â Â Â Â canvas:
+                            Â Â Â Â Â Â Â Â Color:
+                            Â Â Â Â Â Â Â Â Â Â Â Â rgba: 1, 0, 1, 1
+                            Â Â Â Â Â Â Â Â Rectangle:
+                            Â Â Â Â Â Â Â Â Â Â Â Â pos: self.pos
+                            Â Â Â Â Â Â Â Â Â Â Â Â size: self.size
+                            """
+                            Â 
+                            Builder.load_string(KV)
+                            '''
+        Screen:
+            name: 'Le language KV - 2 - Bindings'
+
+            GridLayout:
+                cols: 2
+                ContentLabel:
+                    text:
+                        '''
+                        1. Callback:
+                        '''
+                CodeLabel:
+                    text:
+                        '''
+                        Widget:
+                        Â Â Â Â on_pos:
+                        Â Â Â Â Â Â Â Â print('my pos is %s' % self.pos)
+
+                        Button:
+                        Â Â Â Â on_press:
+                        Â Â Â Â Â Â Â Â print("I've been pressed")
+                        '''
+                Spacer
+                Spacer
+                ContentLabel:
+                    text:
+                        '''
+                        2. DÃ©pendance:
+                        '''
+                CodeLabel:
+                    text:
+                        '''
+                        Widget:
+                        Â Â Â Â canvas.before:
+                        Â Â Â Â Â Â Â Â Rectangle:
+                        Â Â Â Â Â Â Â Â Â Â Â Â pos: self.pos
+                        Â Â Â Â Â Â Â Â Â Â Â Â size: self.size
+                        '''
+        Screen:
+            name: 'Le language KV - 3 - rÃ¨gles'
+            GridLayout:
+                pos_hint: {'center': (.5, .5)}
+                cols: 2
+                spacing: 10
+                ContentLabel:
+                    text:
+                        '''
+                        â€£ root rule: Ce qui sera retournÃ© par le loader
+                        Â   une seule autorisÃ©e par chaine/fichier.
+                        '''
+                    text_size: self.size
+                CodeLabel:
+                    size_hint_x: .5
+                    text:
+                        '''
+                        MyWidget:
+                        Â Â Â Â Label:
+                        Â Â Â Â Â Â Â Â text: 'example'
+                        '''
+
+                ContentLabel:
+                    text:
+                        '''
+                        â€£ rÃ¨gle de classe: permet de configurer le style et le
+                        Â Â Â contenus de toutes les instances d'une classe.
+                        '''
+                    text_size: self.size
+                CodeLabel:
+                    size_hint_x: .5
+                    text:
+                        '''
+                        <Widget>:
+                        Â Â Â Â Label:
+                        Â Â Â Â Â Â Â Â text: 'example'
+                        '''
+
+                ContentLabel:
+                    text:
+                        '''
+                        â€£ Classes dynamiques: permet de crÃ©er une classe en KV,
+                        Â Â Â en dÃ©clarant l'hÃ©ritage avec '@'.
+                        '''
+                    text_size: self.size
+
+                CodeLabel:
+                    size_hint_x: .5
+                    text:
+                        '''
+                        <MyWidget@Widget>:
+                        Â Â Â Â Label:
+                        Â Â Â Â Â Â Â Â text: 'example'
+                        '''
+        Screen:
+            name: 'Le language KV - 4 - Identifiants'
+
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''
+                        Utilisation d'id et ids pour rÃ©fÃ©rencer d'autres widgets
+                        '''
+                BoxLayout:
+                    CodeLabel:
+                        text:
+                            '''
+                            BoxLayout:
+                            Â Â Â Â orientation: 'vertical'
+                            Â Â Â Â TextInput:
+                            Â Â Â Â Â Â Â Â id: ti
+                            Â Â Â Â Label:
+                            Â Â Â Â Â Â Â Â text: ti.text
+                            '''
+                    BoxLayout:
+                        orientation: 'vertical'
+                        TextInput:
+                            id: ti_
+                        Label:
+                            color: default_color
+                            text: ti_.text
+                Spacer:
+                    size_hint_y: None
+                    height: 10
+
+                BoxLayout:
+                    CodeLabel:
+                        text:
+                            '''
+                            <MyWidget@BoxLayout>:
+                            Â Â Â Â Button:
+                            Â Â Â Â Â Â Â Â id: btn
+                            Â Â Â Â Â Â Â Â text: 'push me'
+                            Â 
+                            BoxLayout:
+                            Â Â Â Â Label:
+                            Â Â Â Â Â Â Â Â text: ''
+                            Â Â Â Â MyWidget:
+                            Â Â Â Â Â Â Â Â id: box
+                            '''
+                    BoxLayout:
+                        MyWidget:
+                            id: box
+                        Label:
+                            color: default_color
+                            text: ''
+        Screen:
+            name: 'Le language KV - 5 - directives'
+
+            GridLayout:
+                cols: 2
+                spacing: 10
+                CodeLabel:
+                    code:
+                        '''
+                        â€”:import sin math.sin
+                        â€”:import chain itertools.chain
+
+                        Widget:
+                        Â Â Â Â canvas:
+                        Â Â Â Â Â Â Â Â Color:
+                        Â Â Â Â Â Â Â Â Â Â Â Â rgba: 0, 0, 0, 1
+                        Â Â Â Â Â Â Â Â Line:
+                        Â Â Â Â Â Â Â Â Â Â Â Â points:
+                        Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â list(chain(*zip(
+                        Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â [self.x + x * self.width / 100.
+                        Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â for x in range(100)],
+                        Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â [self.center_y + sin(y/10.) * 100
+                        Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â for y in range(100)])))
+                        '''.replace('â€”', '#')
+
+                Widget:
+                    canvas:
+                        Color:
+                            rgba: 0, 0, 0, 1
+                        Line:
+                            points:
+                                list(chain(*zip(
+                                [self.x + x * self.width / 100. for x in range(100)],
+                                [self.center_y + sin(y/10.) * 100 for y in range(100)])))
+                CodeLabel:
+                    code:
+                        '''
+                        â€”:set font_size 35
+                        â€”:set default_color (0, 0, 0, 1)
+                        Â 
+                        Label:
+                        Â Â Â Â font_size: font_size
+                        Â Â Â Â text: "hello world"
+                        Â Â Â Â color: default_color
+                        '''.replace('â€”', '#')
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                Label:
+                    font_size: font_size
+                    text: "hello world"
+                    color: default_color
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                CodeLabel:
+                    code:
+                        '''
+                        â€”:include somefile.kv
+                        Â 
+                        SomeWidgetDefinedInSomeFile:
+                        Â Â Â Â text: "Hey"
+                        '''.replace('â€”', '#')
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+                Label:
+                    color: default_color
+                    text: 'Hey'
+                    size_hint_y: None
+                    height: self.texture_size[1]
+        Screen:
+            name: 'Application'
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''
+                        Deux maniÃ¨re de lancer une application:
+                        â€£ runTouchApp
+                        Â 
+                        â€£ App().run()
+                        '''
+                BoxLayout:
+                    spacing: 2
+                    CodeLabel:
+                        code:
+                            '''
+                            from kivy.base import runTouchApp
+                            from kivy.uix.label import Label
+                            Â 
+                            runTouchApp(
+                            Â Â Â Â Label(
+                            Â Â Â Â Â Â Â Â text='hello world'))
+                            '''
+
+                    CodeLabel:
+                        code:
+                            '''
+                            from kivy.app import App
+                            from kivy.uix.label import Label
+                            Â 
+                            class HelloWorld(App):
+                            Â Â Â Â def build(self):
+                            Â Â Â Â Â Â Â Â return Label(
+                            Â Â Â Â Â Â Â Â Â Â Â Â text='hello world')
+                            Â 
+                            HelloWorld().run()
+                            '''
+        Screen:
+            name: 'Applications - 2 - avantages'
+
+            ContentLabel:
+                pos_hint: {'center': (.5, .5)}
+                text:
+                    '''
+                    â€£ App offre de nombreuses fonctions utilitaires
+                    Â Â Â (on_pause, on_stop, on_resume, build_config, build_settingsâ€¦)
+                    Â 
+                    â€£ App charge le fichier kv associÃ© Ã  la
+                    Â Â Â classe (convention de nommage 'HelloWorldApp â†’
+                    Â Â Â helloworld.kv) dans la methode build par dÃ©faut, et le
+                    Â Â Â fichier de configuration (helloworld.ini) si existant.
+                    Â 
+                    â€£ App est un EventDispatcher â†’ peut servir de contrÃ´leur
+                    Â Â Â principal (accessible depuis kv via le mot clÃ© "app").
+                    '''
+
+
+        Screen:
+            name: 'Utilitaires'
+
+            ContentLabel:
+                pos_hint: {'center': (.5, .5)}
+                text:
+                    '''
+                    â€£ Clock
+                    Â Â Â Permet de planifier des taches rÃ©pÃ©titives
+                    Â Â Â (schedule_interval) ou non (schedule_once)
+                    â€£ Animation
+                    Â Â Â Transitionne la valeur d'une NumericProperty ou
+                    Â Â Â ListProperty (contenant un nombre fixe de valeurs
+                    Â Â Â NumÃ©riques) d'une valeur Ã  une autre, dans un temps donnÃ©,
+                    Â Â Â via une fonction de transition configurable.
+                    â€£ UrlRequest
+                    Â Â Â urllib wrapper pour simplifier le travail en arriÃ¨re
+                    Â Â Â plan (event lors du succÃ¨s/Ã©chec)
+                    etc
+                    '''
+        Screen:
+            name: 'Exemples: kivycatalog'
+
+        Screen:
+            name: 'Outils'
+            ContentLabel:
+                font_size: sp(25)
+                text:
+                    '''
+                    Kivy vient avec un certains nombre d'outils pour faciliter
+                    le dÃ©veloppement, les connaÃ®tre peut vous faire gagner
+                    beaucoup de temps.
+
+                    â€£ Modules:
+                    Permettent de modifier le comportement d'une application kivy:
+                    â†’ Inspector
+                    â†’ Monitor
+                    â†’ Recorder
+                    â†’ Monitor
+                    â†’ Screen
+                    Â 
+                    â€£ Garden
+                    Modules communautaires Ã  importer directement dans votre
+                    projet
+                    â†’ garden.graph
+                    â†’ garden.pi
+                    â†’ garden.ddd
+                    â†’ etcâ€¦
+                    '''
+        Screen:
+            name: 'Exemples: garden'
+
+        Screen:
+            name: 'QuestionsÂ ?'
+
+            Label:
+                id: question
+                text: '?'
+                font_size: 50 + abs(50 * sin(10))
+                color: default_color
+
+                canvas.before:
+                    PushMatrix
+                    Rotate:
+                        origin: self.center
+                        angle: 10 * 50
+                canvas.after:
+                    PopMatrix
+
+        Screen:
+            name: 'Bonus: NouveautÃ©s 1.9'
+            BoxLayout:
+                orientation: 'vertical'
+                ContentLabel:
+                    text:
+                        '''
+                        â€£ SDL2 provider (good bye pygame!)
+                        â€£ ffpyplayer video provider (ffmpeg)
+                        â€£ EffectWidget (shaders)
+                        â€£ Window's KeyboardHeight property (android)
+                        â€£ support SVG!
+                        â€£ Rebind in kv
+                        â€£ Tesselator
+                        Â 
+                        + nombreuses corrections et ajouts mineurs.
+                        '''
+                Spacer
+    SubTitle:
+        text:
+            '%s/%s - %s:%s' % (
+            1 + sm.screen_names.index(sm.current) if sm.current else 0,
+            len(sm.screens), int(10 // 60), str(int(10 %
+            60)).zfill(2))
+        font_size: sp(15)
+
+<MyWidget@BoxLayout>:
+    Button:
+        id: btn
+        text: 'push me'

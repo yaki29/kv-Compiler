@@ -1,27 +1,17 @@
-# Generated from example.kv at 2017-03-13 06:00:45.618583
+# Generated from example.kv at 2017-03-13 12:17:17.300195
 
-import kivy.metrics as Metrics
+import sys
+from kivy.metrics import dp, sp
 from kivy.factory import Factory
-from kivy.lang import (
-    Builder, ParserSelectorName, _handlers, ProxyApp, delayed_call_fn)
+from functools import partial
+from kivy.lang import Builder, ParserSelectorId, ParserSelectorName, ParserSelectorClass
 from kivy.event import EventDispatcher, Observable
 from kivy import require
-
-
-_mc = [None, ] * 1
+_mc = {}
+_otype = (EventDispatcher, Observable)
 _includes = []
 
-app = ProxyApp()
-pt = Metrics.pt
-inch = Metrics.inch
-cm = Metrics.cm
-mm = Metrics.mm
-dp = Metrics.dp
-sp = Metrics.sp
-
-
 def _execute_directive(cmd):
-    import sys
     # small version without error handling of directives
     # temporary, until the compiler analyse and do the work
     cmd = cmd.strip()
@@ -72,23 +62,39 @@ def _execute_directive(cmd):
 # registration
 badd = Builder.rules.append
 
-_mc[0] = set()
-def _r0(root):
-    if root.__class__ not in _mc[0]:
-        if not hasattr(root, "text"):
-            root.create_property("text", ("Hello World"))
-        _mc[0].add(root.__class__)
-
-    root.text = "Hello World"
-
-    prop = root.property("text", quiet=True)
-    if prop is not None:
-        prop.dispatch(root)
-
-_r0.avoid_previous_rules = False
+# support for root object
 
 
+
+_mc[1] = []
+def _mc1(self):
+    if self.__class__ in _mc[1]:
+        return
+    if not hasattr(self, "text"):
+        self.create_property("text", "Hello World")
+    
+    _mc[1].append(self.__class__)
+
+def _r1(self):
+    # example.kv:0 Label:
+    root = self
+
+    # ensure all properties exists
+    _mc1(self)
+
+    # ids
+    self.ids = {}
+    # set default properties
+    self.text = "Hello World"
+    
+
+    # shortcuts
+
+    # link handlers
+
+_r1.avoid_previous_rules = False
 def get_root():
     widget = Factory.get("Label")()
-    _r0(widget)
+    _r1(widget)
     return widget
+    

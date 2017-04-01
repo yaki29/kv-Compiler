@@ -319,7 +319,7 @@ import datetime
 from types import CodeType
 from collections import OrderedDict, defaultdict
 from kivy.lang import Parser, lang_str, Builder
-from lang import BuilderBase
+# from kivy.lang import BuilderBase
 from re import match, sub, split, compile as re_compile
 from functools import partial
 from os.path import abspath
@@ -2405,4 +2405,4 @@ if __name__ == "__main__":
     from kivy.lang import Builder
     fn = len(sys.argv) > 1 and sys.argv[1] or r'..\data\style.kv'
     print fn
-    BuilderBase.compile_kv(filename=fn)
+    Builder.load_file(filename=fn)
