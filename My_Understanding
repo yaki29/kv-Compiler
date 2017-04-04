@@ -1,0 +1,9 @@
+I was thinking of making something like set of buckets or a hash-table which stores the properties and connected to them are the properties they are bound to. The optimization of the compiler comes when we rebind once per bucket instead of many times.
+Structure of compiler:
+For every widget we create them using rules from top to bottom order.
+Then for each widget we initialise all the constant properties eg. prop: 0.75, it is not going to change ever, so we don't need any binding.
+Then we will initialise the graphical instructions
+so far no bindings has happened 
+I think first all properties should be None then we dispatch each of them once during the dispatch session, which will update the properties which may have changed during the initialisation phase and properties like prop:0.75 will be assigned their values.
+I'm still researching on reducing the dispatches required.
+After that we go on on_prop event for all the widgets in a bottom to up order.
